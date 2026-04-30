@@ -1,4 +1,5 @@
 package com.app;
+
 import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -10,11 +11,19 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("text/html");
+
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
             Connection con = DB.getConnection();
+
+            // 🔥 IMPORTANT SAFETY CHECK
+            if (con == null) {
+                response.getWriter().println("Database connection failed");
+                return;
+            }
 
             PreparedStatement ps = con.prepareStatement(
                 "SELECT * FROM users WHERE email=? AND password=?"
@@ -31,17 +40,15 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("user", email);
 
                 response.sendRedirect("home.jsp");
-                return;   // ✅ IMPORTANT
 
             } else {
 
-                response.sendRedirect("login.html");
-                return;
+                response.getWriter().println("Invalid email or password");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("ERROR: " + e.getMessage()); // ✅ show real error
+            response.getWriter().println("Server error occurred. Check logs.");
         }
     }
 }

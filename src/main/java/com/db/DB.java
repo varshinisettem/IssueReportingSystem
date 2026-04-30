@@ -9,13 +9,11 @@ public class DB {
         Connection con = null;
 
         try {
-            // Load MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Cloud MySQL connection (InfinityFree)
-            String url = "jdbc:mysql://sql309.infinityfree.com:3306/if0_41795861_IssueReportingSystem?useSSL=false&allowPublicKeyRetrieval=true";
-            String user = "if0_41795861";
-            String pass = "WkHaYYa848en";
+            String url = System.getenv("DB_URL");
+            String user = System.getenv("DB_USER");
+            String pass = System.getenv("DB_PASS");
 
             con = DriverManager.getConnection(url, user, pass);
 
