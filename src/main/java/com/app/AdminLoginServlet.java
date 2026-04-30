@@ -1,10 +1,8 @@
+package com.app;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import javax.servlet.annotation.WebServlet;
-import com.db.DB;
 
-@WebServlet("/AdminLoginServlet")   // 🔥 VERY IMPORTANT
 public class AdminLoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

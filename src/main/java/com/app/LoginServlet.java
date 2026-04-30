@@ -1,11 +1,10 @@
+package com.app;
 import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import javax.servlet.annotation.WebServlet;
 import java.sql.*;
 import com.db.DB;
 
-@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

@@ -1,11 +1,12 @@
+package com.app;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import com.db.DB;
+
 public class UpdateStatusServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

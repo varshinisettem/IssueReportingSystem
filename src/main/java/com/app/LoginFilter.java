@@ -1,8 +1,14 @@
+package com.app;
+
 import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class LoginFilter implements Filter {
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // optional init
+    }
 
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
@@ -16,7 +22,6 @@ public class LoginFilter implements Filter {
 
         boolean loggedIn = (session != null && session.getAttribute("user") != null);
 
-        // ✅ PUBLIC PAGES (NO LOGIN REQUIRED)
         boolean isPublic =
                 uri.endsWith("login.html") ||
                 uri.endsWith("register.html") ||
@@ -29,5 +34,9 @@ public class LoginFilter implements Filter {
         } else {
             res.sendRedirect("login.html");
         }
+    }
+
+    public void destroy() {
+        // cleanup if needed
     }
 }
