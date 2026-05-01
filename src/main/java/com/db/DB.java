@@ -15,12 +15,13 @@ public class DB {
             String user = System.getenv("DB_USER");
             String pass = System.getenv("DB_PASS");
 
+            // 👉 IF running locally (no env variables)
             if (url == null || user == null || pass == null) {
-                throw new RuntimeException("Missing DB env variables in Railway");
-            }
 
-            // 🔥 IMPORTANT FIX: SSL trust added
-            url = url + "&trustCertificateKeyStoreUrl=";
+                url = "jdbc:mysql://localhost:3306/issue_db";
+                user = "root";
+                pass = "varshi"; // 🔥 put your MySQL password
+            }
 
             con = DriverManager.getConnection(url, user, pass);
 
