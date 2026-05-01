@@ -2,34 +2,79 @@
 <html>
 <head>
 <title>Issue Reporting System</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body {
-    font-family: 'Segoe UI';
-    background: linear-gradient(to right, #36d1dc, #5b86e5);
-    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #36d1dc, #5b86e5);
     margin: 0;
+    color: white;
 }
 
+/* NAVBAR */
 .nav {
-    background: #333;
-    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
 }
 
 .nav a {
     color: white;
-    margin: 15px;
+    margin: 6px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    transition: 0.3s;
 }
 
+.nav a:hover {
+    background: #5b86e5;
+}
+
+/* CONTAINER */
 .container {
+    text-align: center;
     margin-top: 100px;
-    color: white;
+    padding: 20px;
 }
 
+/* TITLE */
 h1 {
-    font-size: 40px;
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+/* TEXT */
+p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+/* MOBILE RESPONSIVE */
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 26px;
+    }
+
+    .container {
+        margin-top: 60px;
+    }
+
+    .nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav a {
+        display: block;
+        width: 90%;
+        text-align: center;
+    }
 }
 </style>
 </head>
@@ -45,7 +90,7 @@ h1 {
 </div>
 
 <div class="container">
-    <h1>Issue Reporting System</h1>
+    <h1>📢 Issue Reporting System</h1>
     <p>Report problems. Track status. Resolve efficiently.</p>
 </div>
 
