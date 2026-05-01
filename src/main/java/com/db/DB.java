@@ -15,6 +15,13 @@ public class DB {
             String user = System.getenv("DB_USER");
             String pass = System.getenv("DB_PASS");
 
+            if (url == null || user == null || pass == null) {
+                throw new RuntimeException("Missing DB env variables in Railway");
+            }
+
+            // 🔥 IMPORTANT FIX: SSL trust added
+            url = url + "&trustCertificateKeyStoreUrl=";
+
             con = DriverManager.getConnection(url, user, pass);
 
         } catch (Exception e) {

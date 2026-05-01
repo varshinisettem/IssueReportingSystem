@@ -14,7 +14,7 @@
 <html>
 <head>
     <title>Home Dashboard</title>
-
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             margin: 0;

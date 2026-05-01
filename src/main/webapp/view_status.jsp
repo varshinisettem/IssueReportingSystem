@@ -14,7 +14,7 @@
 <html>
 <head>
     <title>Complaint Status</title>
-
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Segoe UI';

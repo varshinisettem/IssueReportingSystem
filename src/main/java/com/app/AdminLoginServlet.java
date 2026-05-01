@@ -1,4 +1,5 @@
 package com.app;
+
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -8,22 +9,27 @@ public class AdminLoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("text/html");
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        // ✅ SAFE STRING COMPARISON
-        if ("admin".equals(username) && "admin123".equals(password)) {
+        try {
 
-            HttpSession session = request.getSession();
-            session.setAttribute("admin", username);
+            if ("admin".equals(username) && "admin123".equals(password)) {
 
-            // ✅ GO TO ADMIN DASHBOARD
-            response.sendRedirect("view.jsp");
+                HttpSession session = request.getSession();
+                session.setAttribute("admin", username);
 
-        } else {
+                response.sendRedirect("view.jsp");
 
-            // ❌ WRONG LOGIN
-            response.sendRedirect("admin_login.html");
+            } else {
+                response.getWriter().println("Invalid admin login");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("ERROR: " + e.getMessage());
         }
     }
 }

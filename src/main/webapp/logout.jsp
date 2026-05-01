@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
-    // 🔐 DESTROY SESSION
-    if (session != null) {
-        session.invalidate();
+    // 🔐 GET EXISTING SESSION ONLY
+    javax.servlet.http.HttpSession sessionObj = request.getSession(false);
+
+    if (sessionObj != null) {
+        sessionObj.invalidate();
     }
 
-    // 🚫 PREVENT BACK BUTTON CACHE (optional but good practice)
+    // 🚫 PREVENT BACK BUTTON CACHE
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
     response.setDateHeader("Expires", 0);

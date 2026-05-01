@@ -1,10 +1,9 @@
 package com.app;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import javax.servlet.ServletException;
+
+import java.io.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
+import java.sql.*;
 import com.db.DB;
 
 public class UpdateStatusServlet extends HttpServlet {
@@ -12,24 +11,37 @@ public class UpdateStatusServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
-
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            String idStr = request.getParameter("id");
+            String status = request.getParameter("status");
 
-            Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/issue_db", "root", "varshi");
+            if (idStr == null || status == null) {
+                response.getWriter().println("Missing parameters");
+                return;
+            }
+
+            int id = Integer.parseInt(idStr);
+
+            Connection con = DB.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                "UPDATE complaints SET status='Resolved' WHERE id=?");
+                "UPDATE complaints SET status=? WHERE id=?"
+            );
 
-            ps.setInt(1, id);
-            ps.executeUpdate();
+            ps.setString(1, status);
+            ps.setInt(2, id);
 
-            response.sendRedirect("view.jsp");
+            int updated = ps.executeUpdate();
+
+            if (updated > 0) {
+                response.sendRedirect("view.jsp");
+            } else {
+                response.getWriter().println("Update failed");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
+            response.getWriter().println("ERROR: " + e.getMessage());
         }
     }
 }

@@ -1,56 +1,55 @@
 <%@ page import="java.sql.*" %>
 
 <%
-    // 🔐 Admin protection
-    String admin = (String) session.getAttribute("admin");
+String admin = (String) session.getAttribute("admin");
 
-    if (admin == null) {
-        response.sendRedirect("admin_login.html");
-        return;
-    }
+if (admin == null) {
+    response.sendRedirect("admin_login.html");
+    return;
+}
 %>
 
 <html>
 <head>
-<title>Dashboard</title>
+<title>Complaints Dashboard</title>
+
+<!-- ✅ MOBILE RESPONSIVE FIX -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-    font-family: 'Segoe UI';
-    background: #f4f6f9;
+    font-family: Arial;
     margin: 0;
+    background: #f4f6f9;
 }
 
+/* HEADER */
 .header {
     background: #667eea;
     color: white;
     padding: 15px;
     text-align: center;
-    font-size: 24px;
 }
 
-.logout {
-    text-align: right;
-    margin: 10px;
+/* RESPONSIVE TABLE WRAPPER */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
 }
 
-.stats {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 18px;
-}
-
+/* TABLE */
 table {
     width: 90%;
-    margin: 30px auto;
+    margin: 20px auto;
     border-collapse: collapse;
     background: white;
+    min-width: 600px; /* important for mobile scroll */
 }
 
 th, td {
-    padding: 12px;
+    padding: 10px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
 }
 
 th {
@@ -58,22 +57,29 @@ th {
     color: white;
 }
 
-.pending {
-    color: orange;
-    font-weight: bold;
-}
+/* STATUS COLORS */
+.pending { color: orange; font-weight: bold; }
+.resolved { color: green; font-weight: bold; }
 
-.resolved {
-    color: green;
-    font-weight: bold;
-}
-
+/* BUTTON */
 button {
     padding: 6px 12px;
     background: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
+}
+
+/* MOBILE FIX */
+@media screen and (max-width: 768px) {
+    table {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .header {
+        font-size: 18px;
+    }
 }
 </style>
 
@@ -83,84 +89,33 @@ button {
 
 <div class="header">Complaints Dashboard</div>
 
-<div class="logout">
-    <a href="LogoutServlet">Logout</a>
-</div>
+<div class="table-container">
 
 <%
-Connection con = null;
-PreparedStatement ps = null;
-ResultSet rs = null;
+Connection con = com.db.DB.getConnection();
+PreparedStatement ps = con.prepareStatement("SELECT * FROM complaints ORDER BY id DESC");
+ResultSet rs = ps.executeQuery();
 
-int total = 0, pending = 0, resolved = 0;
-
-try {
-    Class.forName("com.mysql.cj.jdbc.Driver");
-
-    con = DriverManager.getConnection(
-        "jdbc:mysql://localhost:3306/issue_db", "root", "varshi"
-    );
-
-    // ==============================
-    // 🔥 FETCH ALL COMPLAINTS ONCE
-    // ==============================
-    ps = con.prepareStatement("SELECT * FROM complaints");
-    rs = ps.executeQuery();
-
-    java.util.ArrayList<java.util.HashMap<String, String>> list =
-        new java.util.ArrayList<>();
-
-    while (rs.next()) {
-
-        total++;
-
-        String status = rs.getString("status");
-
-        if ("Pending".equalsIgnoreCase(status))
-            pending++;
-        else
-            resolved++;
-
-        java.util.HashMap<String, String> row = new java.util.HashMap<>();
-        row.put("id", rs.getString("id"));
-        row.put("title", rs.getString("title"));
-        row.put("description", rs.getString("description"));
-        row.put("category", rs.getString("category"));
-        row.put("status", status);
-
-        list.add(row);
-    }
-
+while(rs.next()) {
 %>
 
-<div class="stats">
-    Total: <%= total %> |
-    Pending: <%= pending %> |
-    Resolved: <%= resolved %>
-</div>
+<form action="UpdateStatusServlet" method="post">
 
 <table>
+
 <tr>
     <th>ID</th>
     <th>Title</th>
-    <th>Description</th>
-    <th>Category</th>
     <th>Status</th>
     <th>Action</th>
 </tr>
 
-<%
-    for (java.util.Map<String, String> row : list) {
-%>
-
 <tr>
-    <td><%= row.get("id") %></td>
-    <td><%= row.get("title") %></td>
-    <td><%= row.get("description") %></td>
-    <td><%= row.get("category") %></td>
+    <td><%= rs.getInt("id") %></td>
+    <td><%= rs.getString("title") %></td>
 
     <td>
-        <% if ("Pending".equalsIgnoreCase(row.get("status"))) { %>
+        <% if ("Pending".equalsIgnoreCase(rs.getString("status"))) { %>
             <span class="pending">Pending</span>
         <% } else { %>
             <span class="resolved">Resolved</span>
@@ -168,33 +123,26 @@ try {
     </td>
 
     <td>
-        <form action="UpdateStatusServlet" method="post">
-            <input type="hidden" name="id" value="<%= row.get("id") %>">
+        <input type="hidden" name="id" value="<%= rs.getInt("id") %>"/>
 
-            <% if ("Pending".equalsIgnoreCase(row.get("status"))) { %>
-                <button type="submit">Resolve</button>
-            <% } else { %>
-                ✔
-            <% } %>
-        </form>
+        <select name="status">
+            <option value="Pending">Pending</option>
+            <option value="Resolved">Resolved</option>
+        </select>
+
+        <button type="submit">Update</button>
     </td>
 </tr>
 
-<%
-    }
-%>
-
 </table>
 
+</form>
+
 <%
-} catch (Exception e) {
-    out.println("<h3 style='color:red'>Error: " + e.getMessage() + "</h3>");
-} finally {
-    try { if (rs != null) rs.close(); } catch(Exception e) {}
-    try { if (ps != null) ps.close(); } catch(Exception e) {}
-    try { if (con != null) con.close(); } catch(Exception e) {}
 }
 %>
+
+</div>
 
 </body>
 </html>

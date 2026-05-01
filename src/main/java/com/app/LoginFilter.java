@@ -6,9 +6,7 @@ import javax.servlet.http.*;
 
 public class LoginFilter implements Filter {
 
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // optional init
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
@@ -22,12 +20,13 @@ public class LoginFilter implements Filter {
 
         boolean loggedIn = (session != null && session.getAttribute("user") != null);
 
+        // ✅ PUBLIC PAGES LIST
         boolean isPublic =
-                uri.endsWith("login.html") ||
-                uri.endsWith("register.html") ||
-                uri.endsWith("index.html") ||
-                uri.endsWith("LoginServlet") ||
-                uri.endsWith("RegisterServlet");
+                uri.contains("login.html") ||
+                uri.contains("register.html") ||
+                uri.contains("index.html") ||
+                uri.contains("LoginServlet") ||
+                uri.contains("RegisterServlet");
 
         if (loggedIn || isPublic) {
             chain.doFilter(request, response);
@@ -36,7 +35,5 @@ public class LoginFilter implements Filter {
         }
     }
 
-    public void destroy() {
-        // cleanup if needed
-    }
+    public void destroy() {}
 }

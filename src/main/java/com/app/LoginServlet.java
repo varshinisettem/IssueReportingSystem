@@ -16,10 +16,13 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        try {
-            Connection con = DB.getConnection();
+        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+            response.getWriter().println("Email and Password required");
+            return;
+        }
 
-            // 🔥 IMPORTANT SAFETY CHECK
+        try (Connection con = DB.getConnection()) {
+
             if (con == null) {
                 response.getWriter().println("Database connection failed");
                 return;
@@ -42,13 +45,12 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("home.jsp");
 
             } else {
-
                 response.getWriter().println("Invalid email or password");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("Server error occurred. Check logs.");
+            response.getWriter().println("Server error: " + e.getMessage());
         }
     }
 }
